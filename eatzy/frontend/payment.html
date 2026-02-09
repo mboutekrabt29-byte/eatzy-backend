@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement - Eatzy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div class="bg-white p-8 rounded-xl shadow w-full max-w-md">
+  <h2 class="text-2xl font-bold mb-6 text-center">Paiement 💳</h2>
+
+  <div class="space-y-4">
+    <label class="flex items-center gap-3">
+      <input type="radio" name="payment" value="cash" checked>
+      💵 Paiement à la livraison
+    </label>
+
+    <label class="flex items-center gap-3">
+      <input type="radio" name="payment" value="card">
+      💳 Carte bancaire
+    </label>
+  </div>
+
+  <button onclick="pay()"
+    class="mt-6 w-full bg-green-500 text-white py-3 rounded hover:bg-green-600">
+    Confirmer le paiement
+  </button>
+
+  <p id="msg" class="text-center text-red-500 mt-4"></p>
+</div>
+
+<script>
+function pay() {
+  const payment_method =
+    document.querySelector("input[name='payment']:checked").value;
+
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("Connecte-toi d'abord");
+    location.href = "login.html";
+    return;
+  }
+
+  if (cart.length === 0) {
+    msg.textContent = "Panier vide";
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(i => total += i.prix * i.quantity);
+
+  fetch("http://localhost:3000/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      user_id: user.id,
+      payment_method,
+      total,
+      items: cart
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    localStorage.setItem("currentOrder", JSON.stringify(data));
+    localStorage.removeItem("cart");
+    location.href = "tracking.html";
+  });
+}
+</script>
+
+</body>
+</html>

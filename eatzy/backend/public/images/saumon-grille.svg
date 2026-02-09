@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect fill="#e0f7fa" width="400" height="300"/>
+  <ellipse cx="200" cy="150" rx="140" ry="80" fill="#ff8c94"/>
+  <ellipse cx="200" cy="150" rx="120" ry="70" fill="#ff6b9d"/>
+  <path d="M 200 80 Q 220 100 200 120 Q 180 100 200 80" fill="#ffd700"/>
+  <circle cx="170" cy="140" r="3" fill="#fff"/>
+  <circle cx="230" cy="140" r="3" fill="#fff"/>
+  <text x="200" y="250" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">Saumon Grillé</text>
+</svg>

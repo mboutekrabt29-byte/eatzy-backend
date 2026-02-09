@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Avis restaurant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow">
+  <h2 class="text-2xl font-bold mb-4">Avis ⭐</h2>
+
+  <p id="avg" class="mb-4 text-lg"></p>
+
+  <!-- FORM AVIS -->
+  <div class="mb-6">
+    <select id="rating" class="border p-2 rounded mb-2">
+      <option value="5">⭐⭐⭐⭐⭐</option>
+      <option value="4">⭐⭐⭐⭐</option>
+      <option value="3">⭐⭐⭐</option>
+      <option value="2">⭐⭐</option>
+      <option value="1">⭐</option>
+    </select>
+
+    <textarea id="comment"
+      placeholder="Votre avis..."
+      class="w-full border p-3 rounded mb-2"></textarea>
+
+    <button onclick="sendReview()"
+      class="bg-red-500 text-white px-6 py-2 rounded">
+      Envoyer
+    </button>
+  </div>
+
+  <!-- LISTE AVIS -->
+  <div id="reviews"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const restaurant_id = params.get("id");
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  alert("Connectez-vous pour laisser un avis");
+  location.href = "login.html";
+}
+
+function loadReviews() {
+  fetch(`http://localhost:3000/api/restaurants/${restaurant_id}/reviews`)
+    .then(r => r.json())
+    .then(data => {
+      avg.textContent = `⭐ Note moyenne : ${data.average}/5`;
+
+      reviews.innerHTML = "";
+      data.reviews.forEach(r => {
+        reviews.innerHTML += `
+          <div class="border-b py-3">
+            <strong>${r.name}</strong>
+            <span> — ⭐ ${r.rating}</span>
+            <p class="text-gray-600">${r.comment || ""}</p>
+          </div>
+        `;
+      });
+    });
+}
+
+function sendReview() {
+  fetch("http://localhost:3000/api/reviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      user_id: user.id,
+      restaurant_id,
+      rating: rating.value,
+      comment: comment.value
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    comment.value = "";
+    loadReviews();
+  });
+}
+
+loadReviews();
+</script>
+
+</body>
+</html>

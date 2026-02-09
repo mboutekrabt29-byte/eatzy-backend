@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect fill="#f5f5dc" width="400" height="300"/>
+  <rect x="100" y="80" width="200" height="140" rx="10" fill="#8b4513"/>
+  <rect x="110" y="90" width="180" height="120" rx="5" fill="#a0522d"/>
+  <line x1="130" y1="110" x2="270" y2="110" stroke="#654321" stroke-width="2"/>
+  <line x1="130" y1="130" x2="270" y2="130" stroke="#654321" stroke-width="2"/>
+  <circle cx="200" cy="160" r="30" fill="#ffd700"/>
+  <text x="200" y="250" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">Steak au Poivre</text>
+</svg>

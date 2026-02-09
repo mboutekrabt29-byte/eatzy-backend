@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Suivi commande</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div class="bg-white p-8 rounded-xl shadow w-full max-w-md text-center">
+  <h2 class="text-2xl font-bold mb-4">Commande confirmée 🎉</h2>
+
+  <div id="info"></div>
+
+  <p class="mt-6 text-gray-500">
+    Merci pour votre commande !
+  </p>
+</div>
+
+<script>
+const order = JSON.parse(localStorage.getItem("currentOrder"));
+
+document.getElementById("info").innerHTML = `
+  <p>🆔 Commande #${order.orderId}</p>
+  <p>📦 Statut : ${order.status}</p>
+`;
+</script>
+
+</body>
+</html>

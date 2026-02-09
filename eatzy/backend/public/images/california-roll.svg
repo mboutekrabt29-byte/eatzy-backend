@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect fill="#fffef0" width="400" height="300"/>
+  <ellipse cx="200" cy="150" rx="120" ry="50" fill="#ffd700"/>
+  <ellipse cx="200" cy="150" rx="100" ry="40" fill="#90ee90"/>
+  <ellipse cx="200" cy="150" rx="80" ry="35" fill="#fff"/>
+  <ellipse cx="200" cy="140" rx="60" ry="25" fill="#ff6347"/>
+  <ellipse cx="200" cy="160" rx="60" ry="25" fill="#87ceeb"/>
+  <text x="200" y="250" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">California Roll</text>
+</svg>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Eatzy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<header class="bg-gradient-to-r from-red-500 to-orange-400 text-white px-8 py-4 flex justify-between items-center">
+  <h1 class="text-2xl font-bold">Eatzy 🍽️</h1>
+  <div class="flex gap-4">
+    <div id="userBox"></div>
+    <a href="cart.html">🛒 Panier</a>
+    <a href="login.html">👤 Connexion</a>
+  <a href="reviews.html?id=${r.id}"
+  class="mt-2 inline-block text-red-500 underline">
+  Voir les avis ⭐
+</a>
+
+</div>
+</header>
+
+<section class="max-w-7xl mx-auto p-8 grid grid-cols-1 md:grid-cols-3 gap-6" id="restaurants"></section>
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+const box = document.getElementById("userBox");
+
+if (user) {
+  box.innerHTML = `
+    <span>👋 Bonjour ${user.name}</span>
+    <button onclick="logout()" class="ml-4 underline">Déconnexion</button>
+  `;
+} else {
+  box.innerHTML = `<a href="login.html">Connexion</a>`;
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  location.reload();
+}
+</script>
+
+<script>
+fetch("http://localhost:3000/api/restaurants")
+.then(r => r.json())
+.then(data => {
+  const c = document.getElementById("restaurants");
+
+  data.forEach(r => {
+    c.innerHTML += `
+      <div class="bg-white rounded-xl shadow hover:scale-105 transition overflow-hidden">
+        <img src="http://localhost:3000/images/${r.image}" class="h-40 w-full object-contain bg-gray-50 p-4">
+        <div class="p-4">
+          <h2 class="text-xl font-bold">${r.nom}</h2>
+          <p class="text-gray-500">${r.cuisine}</p>
+          <button onclick='addToCart(${JSON.stringify(r)})'
+            class="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>`;
+  });
+});
+
+function addToCart(r) {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart.push({ ...r, quantity: 1 });
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("✅ Ajouté au panier");
+}
+</script>
+
+</body>
+</html>

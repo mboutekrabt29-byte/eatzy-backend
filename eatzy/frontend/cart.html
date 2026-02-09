@@ -1,0 +1,55 @@
+<h1 class="text-2xl font-bold p-6">Mon panier 🛒</h1>
+<div id="cart" class="p-6"></div>
+<button onclick="goToPayment()"
+  class="bg-green-500 text-white px-6 py-3 rounded">
+  Passer au paiement
+</button>
+
+<script>
+function goToPayment() {
+  location.href = "payment.html";
+}
+</script>
+
+
+<script>
+const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+const div = document.getElementById("cart");
+
+cart.forEach(i => {
+  div.innerHTML += `<p>${i.nom} x${i.quantity}</p>`;
+});
+
+async function order() {
+  if (!localStorage.getItem("user")) {
+    alert("Connecte-toi d'abord");
+    location.href = "login.html";
+    return;
+  }
+
+  const res = await fetch("http://localhost:3000/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items: cart })
+  });
+  const order = await res.json();
+  localStorage.setItem("currentOrder", JSON.stringify(order));
+  localStorage.removeItem("cart");
+  location.href = "tracking.html";
+
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) {
+  alert("Connecte-toi pour commander");
+  location.href = "login.html";
+  return;
+}
+body: JSON.stringify({
+  user_id: user.id,
+  payment_method: "cash",
+  total: total,
+  items: cart
+})
+
+
+}
+</script>
