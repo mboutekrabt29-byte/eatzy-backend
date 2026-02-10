@@ -5,32 +5,33 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 
 const app = express();
-const PORT = 3000;
 
 /* ================== MIDDLEWARE ================== */
 app.use(cors());
 app.use(express.json());
 
-/* ================== STATIC FILES (IMAGES) ================== */
+/* ================== STATIC FILES ================== */
 app.use(
   "/images",
   express.static(path.join(__dirname, "public/images"))
 );
 
-/* ================== DATABASE ================== */
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "eatzy"
+/* ================== DATABASE (RAILWAY) ================== */
+const db = mysql.createPool({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT,
+  ssl: { rejectUnauthorized: false }
 });
 
-db.connect(err => {
+db.getConnection(err => {
   if (err) {
     console.error("❌ MySQL error:", err);
     process.exit(1);
   }
-  console.log("✅ MySQL connected");
+  console.log("✅ MySQL connected (Railway)");
 });
 
 /* ================== AUTH ================== */
@@ -77,34 +78,9 @@ app.get("/api/restaurants", (req, res) => {
   });
 });
 
-/* ================== COMMANDES (DEMO) ================== */
-let orders = [];
-
-app.post("/api/orders", (req, res) => {
-  const order = {
-    id: Date.now(),
-    ...req.body,
-    status: "preparing",
-    createdAt: new Date()
-  };
-  orders.push(order);
-  res.json(order);
-});
-
-app.get("/api/orders/:id", (req, res) => {
-  const order = orders.find(o => o.id == req.params.id);
-  if (!order) return res.status(404).json({ error: "Commande introuvable" });
-  res.json(order);
-});
-/* ================== AVIS & NOTES ================== */
-
-// Ajouter / remplacer un avis
+/* ================== AVIS ================== */
 app.post("/api/reviews", (req, res) => {
   const { user_id, restaurant_id, rating, comment } = req.body;
-
-  if (!user_id || !restaurant_id || !rating) {
-    return res.status(400).json({ error: "Données manquantes" });
-  }
 
   db.query(
     `
@@ -122,31 +98,18 @@ app.post("/api/reviews", (req, res) => {
   );
 });
 
-// Récupérer avis + moyenne
 app.get("/api/restaurants/:id/reviews", (req, res) => {
-  const restaurantId = req.params.id;
+  const id = req.params.id;
 
   db.query(
-    `
-    SELECT 
-      r.rating,
-      r.comment,
-      u.name
-    FROM reviews r
-    JOIN users u ON u.id = r.user_id
-    WHERE r.restaurant_id = ?
-    `,
-    [restaurantId],
+    "SELECT r.rating, r.comment, u.name FROM reviews r JOIN users u ON u.id = r.user_id WHERE r.restaurant_id = ?",
+    [id],
     (err, reviews) => {
       if (err) return res.status(500).json(err);
 
       db.query(
-        `
-        SELECT ROUND(AVG(rating), 1) AS average
-        FROM reviews
-        WHERE restaurant_id = ?
-        `,
-        [restaurantId],
+        "SELECT ROUND(AVG(rating),1) AS average FROM reviews WHERE restaurant_id = ?",
+        [id],
         (err, avg) => {
           res.json({
             average: avg[0].average || 0,
@@ -158,8 +121,9 @@ app.get("/api/restaurants/:id/reviews", (req, res) => {
   );
 });
 
+/* ================== START (RAILWAY) ================== */
+const PORT = process.env.PORT || 3000;
 
-/* ================== START ================== */
-app.listen(PORT, () =>
-  console.log(`🚀 Eatzy backend prêt → http://localhost:${PORT}`)
-);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Eatzy backend running on port ${PORT}`);
+});
